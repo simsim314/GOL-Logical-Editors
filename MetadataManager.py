@@ -6,6 +6,24 @@ import os
 def CellKeyFromXY(x, y):
 	return str(x) + ":" + str(y)
 
+def XYIterator():
+	
+	yield (0, 0)
+	
+	for i in xrange(-1, 2):
+		for j in xrange(-1, 2):
+			if i != 0 and j != 0:
+				yield (i, j)
+	
+	for i in xrange(-2, 3):
+		for j in xrange(-2, 3):
+			if abs(i) == 2 or abs(j) == 2:
+				yield (i, j)
+
+	for i in xrange(-3, 4):
+		for j in xrange(-3, 4):
+			if abs(i) == 3 or abs(j) == 3:
+				yield (i, j)
 	
 def GetDirection(t):
 	dxx, dxy, dyx, dyy = t
@@ -213,6 +231,18 @@ class LogicalDoc:
 				continue 
 				
 			if gollyMode:
+				
+				if " delete " in event: 
+					g.clear(0)
+					
+				if "click" in event and g.getxy() != "":
+					x, y = g.getxy().split()
+					
+					cell = g.getcell(int(x), int(y))
+					
+					if cell >= 0 and cell <= 1:
+						g.putcell(int(x), int(y), 1 - cell)
+					
 				g.doevent(event)
 				continue 
 				
@@ -291,12 +321,12 @@ class LogicalDoc:
 		x = int(xs)
 		y = int(ys)
 					
-		for i in xrange(-1, 2):
-			for j in xrange(-1, 2):
-				key = CellKeyFromXY(x + i, y + j)
-				if key in self.smarCells:
-					return self.snippets[self.smarCells[key]]
 		
+		for i, j in XYIterator():
+			key = CellKeyFromXY(x + i, y + j)
+			if key in self.smarCells:
+				return self.snippets[self.smarCells[key]]
+	
 		return None
 		
 	def SignalClickHandler(self, event):
@@ -528,6 +558,7 @@ class SignalManager:
 						self.signalsFullData.append((g.transform(g.evolve(comp, k), 0, 0, i, 0, 0, j), i, j, k, idx))
 						self.signals.append(g.transform(g.evolve(comp, k), 0, 0, i, 0, 0, j))
 
+						
 	def ToDict(self):
 		return self.__dict__
 	
