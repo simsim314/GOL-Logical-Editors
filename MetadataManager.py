@@ -189,22 +189,28 @@ class LogicalDoc:
 			
 	def Main(self):
 		
-		g.show("left click on a pattern, right click to finish")
+		g.show("left click on a pattern to change, 'h' for help")
 		gollyMode = False
 		
 		while True:
 		
 			event = g.getevent()
 			
-			if "key" in event and "return" in event:
+			if ("key" in event and "return" in event) or (gollyMode and " c " in event):
 				gollyMode = not gollyMode
 				
 				if gollyMode:
 					g.show("In golly mode")
 					g.update()
+
 				else: 
 					g.show("left click on a pattern, right click to finish")
+					g.setrule("B3/S23")
+					g.setalgo("HashLife")
 					g.update()
+					g.update()
+				
+				continue 
 				
 			if gollyMode:
 				g.doevent(event)
@@ -217,7 +223,7 @@ class LogicalDoc:
 					
 					if self.ExistinCircuitHandler() == None:
 						if self.SignalClickHandler(event) == None:
-							g.show("left click on a pattern, right click to finish")
+							g.show("left click on a pattern, h for help")
 		
 		
 			elif "key" in event:
@@ -235,19 +241,38 @@ class LogicalDoc:
 						g.setrule("B3/S23")
 						g.setalgo("HashLife")
 						g.update()
+						
+						
 					else:
 						g.setrule("Perrier")
 						
 						for key in self.smarCells:
 							x, y = key.split(":")
 							g.setcell(int(x), int(y),  self.smarCells[key] + 2)
-							
+						
+						gollyMode = True
+						g.show("In golly mode")
 						g.update()
 				
 				if " s " in event:
 					fname = os.path.join(g.getdir("data"), "MetadataManager.json")
-					self.Save(fname)
+					#self.Save(fname)
 				
+				if " h " in event:
+					noteMessage = "Viewing and Selecting\n\n"
+					noteMessage += "'left click' to chose gun or glider\n"
+					noteMessage += "'c' to see in colors, c to go back \n"
+					noteMessage += "'space' see ahead 1800 generations \n"
+					noteMessage += "'enter' gollyMode, stays in the script \n"
+					
+					noteMessage += "\n Editing Gun \n\n"
+					noteMessage += "'left click' to place\n"
+					noteMessage += "'right click' to switch gun/orientation \n"
+					noteMessage += "'delete' to delete the gun \n"
+					noteMessage += "'left-right arrow' - one step adjustment"
+					
+					g.note(noteMessage)
+					
 	def ExistinCircuitHandler(self):
 		snip = self.ExitingSnippet()
 		
