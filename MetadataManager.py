@@ -14,16 +14,7 @@ def XYIterator():
 		for j in xrange(-1, 2):
 			if i != 0 and j != 0:
 				yield (i, j)
-	
-	for i in xrange(-2, 3):
-		for j in xrange(-2, 3):
-			if abs(i) == 2 or abs(j) == 2:
-				yield (i, j)
 
-	for i in xrange(-3, 4):
-		for j in xrange(-3, 4):
-			if abs(i) == 3 or abs(j) == 3:
-				yield (i, j)
 	
 def GetDirection(t):
 	dxx, dxy, dyx, dyy = t
