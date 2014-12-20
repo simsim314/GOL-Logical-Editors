@@ -214,7 +214,7 @@ class LogicalDoc:
 		
 			event = g.getevent()
 			
-			if ("key" in event and "return" in event) or (gollyMode and " c " in event):
+			if ("key" in event and "return" in event) or (gollyMode and " a " in event):
 				gollyMode = not gollyMode
 				
 				if gollyMode:
@@ -225,7 +225,8 @@ class LogicalDoc:
 					g.show("left click on a pattern, right click to finish")
 					g.setrule("B3/S23")
 					g.setalgo("HashLife")
-					g.update()
+					g.reset()
+				
 					g.update()
 				
 				continue 
@@ -235,14 +236,32 @@ class LogicalDoc:
 				if " delete " in event: 
 					g.clear(0)
 					
-				if "click" in event and g.getxy() != "":
+				if "click" in event and "ctrl" in event and g.getxy() != "":
+					
 					x, y = g.getxy().split()
 					
 					cell = g.getcell(int(x), int(y))
 					
 					if cell >= 0 and cell <= 1:
-						g.putcell(int(x), int(y), 1 - cell)
+						g.setcell(int(x), int(y), 1 - cell)
 					
+					g.update()
+				
+				if " c " in event and "ctrl" in event and g.getselrect() != []:	
+					g.copy()
+				
+				if " v " in event and "ctrl" in event and g.getxy() != "":
+				
+					x, y = g.getxy().split()
+					
+					g.paste(int(x), int(y), "or")
+				
+				if " space " in event:	
+					if "ctrl" in event:
+						g.run(10)
+					else:
+						g.run(1)
+						
 				g.doevent(event)
 				continue 
 				
@@ -265,7 +284,7 @@ class LogicalDoc:
 					g.reset()
 					g.update()		
 					
-				if " c " in event:
+				if " a " in event:
 					
 					if g.getrule() == "Perrier":
 						g.setrule("B3/S23")
@@ -291,7 +310,7 @@ class LogicalDoc:
 				if " h " in event:
 					noteMessage = "Viewing and Selecting\n\n"
 					noteMessage += "'left click' to chose gun or glider\n"
-					noteMessage += "'c' to see in colors, c to go back \n"
+					noteMessage += "'a' to see in colors, a to go back \n"
 					noteMessage += "'space' see ahead 1800 generations \n"
 					noteMessage += "'enter' gollyMode, stays in the script \n"
 					
@@ -299,8 +318,16 @@ class LogicalDoc:
 					noteMessage += "'left click' to place\n"
 					noteMessage += "'right click' to switch gun/orientation \n"
 					noteMessage += "'delete' to delete the gun \n"
-					noteMessage += "'left-right arrow' - one step adjustment"
+					noteMessage += "'left-right arrow' - one step adjustment\n"
 					
+					noteMessage += "\n In Golly Mode \n\n"
+					noteMessage += "'delete' to clear selection\n"
+					noteMessage += "'ctrl' + 'click' to draw \n"
+					noteMessage += "'ctrl' + 'c' to copy selection \n"
+					noteMessage += "'ctrl' + 'v' to paste in mouse location \n"
+					noteMessage += "'space' + to run 1 generation \n"
+					noteMessage += "'ctrl' +'space' to run 10 generations \n"
+				
 					g.note(noteMessage)
 					
 	def ExistinCircuitHandler(self):
